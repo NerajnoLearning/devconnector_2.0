@@ -14,7 +14,7 @@ const User = require('../../models/User');
 //  @access  Public
 router.post(
   '/',
-  
+    //TODOs : Look into putting this into square brackets ~ lines 17 -23; refer to auth lines 33-35
     check('name', 'Name is required').not().isEmpty(),
     check('email', 'Please  include a valid email').isEmail(),
     check(
