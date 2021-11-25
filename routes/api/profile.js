@@ -59,9 +59,8 @@ router.post(
       } = req.body
 
       //Build profile objecj
-      const  profileFields = {
-
-      }
+      const  profileFields = {};
+      profileFields.user = req.user.id;
       if (company) profileFields.company = company;
       if (website) profileFields.website = website; 
       if (location) profileFields.location = location;
@@ -71,9 +70,41 @@ router.post(
       if (skills) {
         profileFields.skills = skills.split(',').map(skill => skill.trim());
       }
-      console.log(skills);
 
-      res.send('Hello');
+      // Build  social object
+      profileFields.social = {}
+
+      console.log(profileFields.social.twitter);
+      if (youtube) profileFields.social.youtube = youtube;
+      if (twitter) profileFields.social.twitter = twitter;
+      if (facebook) profileFields.social.facebook = facebook;
+      if (linkedin) profileFields.social.linkedin = linkedin;
+      if (instagram) profileFields.social.instagram = instagram;
+
+      try{
+          let profile = await Profile.findOne({ user: req.user.id });
+          if(profile){
+            //Update 
+            profile = await Profile.findOneAndUpdate(
+              { user: req.user.id},
+              { $set: profileFields }, 
+              { new: true} 
+              );
+              return res.json(profile);
+          }
+
+          //Create 
+          profile = new Profile(profileFields);
+          
+          await Profile.save();
+          res.json(profile);
+          
+      } catch(err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+      }
+
+    //  res.send('Hello');
 
 
   }
